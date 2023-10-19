@@ -21,7 +21,9 @@ if (isset($_SESSION['username'])) {
             Login<br><input type="text" name="username"><br>
             Password<br><input type="password" name="password"><br>
             Confirm password<br><input type="password" name="confirm_password"><br>
-            <input type="submit" value="Sign up">
+            <img src="../users/captcha.php" alt="CAPTCHA"><br>
+            <input type="text" name="captcha_answer" placeholder="Enter the CAPTCHA code"><br>
+            <input type="submit" value="Sign up"><br>
         </form>
     </div>
     <a href="../index.php">Come back</a>

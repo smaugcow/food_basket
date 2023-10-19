@@ -20,7 +20,9 @@ if (isset($_SESSION['username'])) {
         <form action="../users/login.php" method="post">
             Login <br><input type="text" name="username"><br>
             Password <br><input type="password" name="password"><br>
-            <input type="submit" value="Sign in">
+            <img src="../users/captcha.php" alt="CAPTCHA"><br>
+            <input type="text" name="captcha_answer" placeholder="Enter the CAPTCHA code"><br>
+            <input type="submit" value="Sign in"><br>
         </form>
     </div>
     <a href="../users/registration.php">Sign up</a>

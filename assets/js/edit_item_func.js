@@ -1,7 +1,7 @@
 // Отслеживаем ввод в поле new_item_name
-var newItemNameInput = document.getElementById('new_item_name');
-var inputLabel = document.querySelector('.input-label label');
+var new_item_name_input = document.getElementById('new_item_name');
+var input_label = document.querySelector('.input-label label');
 
-newItemNameInput.addEventListener('input', function() {
-    inputLabel.textContent = "New name: " + this.value;
+new_item_name_input.addEventListener('input', function() {
+    input_label.textContent = "New name: " + this.value;
 });

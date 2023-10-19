@@ -8,6 +8,7 @@ if (isset($_SESSION['username'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $captcha_answer = $_POST['captcha_answer'];
 
     require_once '../includes/config.php';
 
@@ -25,17 +26,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows == 1) {
-        $row = $result->fetch_assoc();
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['username'] = $username;
-            header("Location: ../dashboard/dashboard.php");
-            exit();
+    // Проверка CAPTCHA на пустоту
+    if (isset($_SESSION['captcha_text'])) {
+        $correct_answer = $_SESSION['captcha_text'];
+
+        // Проверка соответствия CAPTCHA
+        if (strcasecmp($captcha_answer, $correct_answer) !== 0) {
+            echo '<script>alert("Invalid answer to CAPTCHA. Please try again."); window.location = "../index.php";</script>';
         } else {
-            echo '<script>alert("Incorrect password."); window.location = "../index.php";</script>';
+            // Проверка существования пользователя
+            if ($result->num_rows == 1) {
+                $row = $result->fetch_assoc();
+                // Проверка пароля
+                if (password_verify($password, $row['password'])) {
+                    $_SESSION['username'] = $username;
+                    header("Location: ../dashboard/dashboard.php");
+                    exit();
+                } else {
+                    echo '<script>alert("Incorrect password."); window.location = "../index.php";</script>';
+                }
+            } else {
+                echo '<script>alert("User is not found."); window.location = "../index.php";</script>';
+            }
         }
     } else {
-        echo '<script>alert("User is not found."); window.location = "../index.php";</script>';
+        echo '<script>alert("Captcha error"); window.location = "../index.php";</script>';
     }
 
     $db->close();

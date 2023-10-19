@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+    $captcha_answer = $_POST['captcha_answer'];
 
     // Проверка наличия хотя бы одной цифры в пароле
     if (!preg_match('/\d/', $password)) {
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($password !== $confirm_password) {
         echo '<script>alert("Password mismatch. Please re-enter your password."); window.location = "../users/registration.php";</script>';
     } else {
-        
+
         require_once '../includes/config.php';
 
         // Подключение к базе данных MySQL
@@ -35,15 +36,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) {
-            echo '<script>alert("A user with this login already exists."); window.location = "../users/registration.php";</script>';
+        // Проверка CAPTCHA на пустоту
+        if (isset($_SESSION['captcha_text'])) {
+            $correct_answer = $_SESSION['captcha_text'];
+
+            // Проверка соответствия CAPTCHA
+            if (strcasecmp($captcha_answer, $correct_answer) !== 0) {
+                echo '<script>alert("Invalid answer to CAPTCHA. Please try again."); window.location = "../index.php";</script>';
+            } else {
+                // Проверка существования пользователя
+                if ($result->num_rows > 0) {
+                    echo '<script>alert("A user with this login already exists."); window.location = "../users/registration.php";</script>';
+                } else {
+                    // Регистрация нового пользователя
+                    $query = "INSERT INTO users (username, password) VALUES (?, ?)";
+                    $stmt = $db->prepare($query);
+                    $stmt->bind_param("ss", $username, $hashed_password);
+                    $stmt->execute();
+                    echo "Registration successful. <a href='../index.php' style='text-decoration: none; color: #007BFF; display: block; margin-top: 20px;'>Sign in</a>";
+                }
+            }
         } else {
-            // Регистрация нового пользователя
-            $query = "INSERT INTO users (username, password) VALUES (?, ?)";
-            $stmt = $db->prepare($query);
-            $stmt->bind_param("ss", $username, $hashed_password);
-            $stmt->execute();
-            echo "Registration successful. <a href='../index.php' style='text-decoration: none; color: #007BFF; display: block; margin-top: 20px;'>Sign in</a>";
+            echo '<script>alert("Captcha error"); window.location = "../users/registration.php";</script>';
         }
 
         $db->close();
