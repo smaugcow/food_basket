@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } else {
-            echo '<script>alert("Captcha error"); window.location = "../users/registration.php";</script>';
+            echo '<script>alert("Captcha error"); window.location = "../users/ceate_new_user.php";</script>';
         }
 
         $db->close();
