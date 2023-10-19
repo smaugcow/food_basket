@@ -2,7 +2,7 @@
 
 This is a course project built on the LAMP (Linux, Apache, MySQL, PHP) stack, featuring a secure authentication system (CAPTCHA).
 
-Please wait while the demonstration gif loads on this page :)
+Please wait while the demonstration GIF loads on this page :)
 ![Header](https://github.com/smaugcow/smaugcow/blob/main/assets/fb.gif)
 
 ### Project Milestones:
